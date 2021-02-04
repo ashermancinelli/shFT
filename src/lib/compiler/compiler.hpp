@@ -1,16 +1,18 @@
 #pragma once
 
-#include <ast.hpp>
-#include <error_handler.hpp>
 #include <vector>
 #include <map>
 #include <cassert>
+#include <initializer_list>
+#include <ast.hpp>
+#include <error_handler.hpp>
+#include <vm.hpp>
 
 namespace fortran::compiler {
+  namespace x3 = boost::spirit::x3;
   struct program {
-    void op(int a);
-    void op(int a, int b);
-    void op(int a, int b, int c);
+    void op(std::initializer_list<int>);
+    void op(int);
 
     int& operator[](std::size_t i) { return code[i]; }
     int operator[](std::size_t i) const { return code[i]; }
@@ -43,11 +45,11 @@ namespace fortran::compiler {
             error_handler(pos, msg); }) {}
 
     inline bool operator()(ast::null) const {
-      assert(false && "Attempted to execute null command!");
+      assert(false && "Null command is not compilable!");
       return false;
     }
 
-    bool operator()(unsigned int x) const;
+    bool operator()(int x) const;
     bool operator()(bool x) const;
     bool operator()(ast::variable const& x) const;
     bool operator()(ast::operation const& x) const;
@@ -62,7 +64,7 @@ namespace fortran::compiler {
 
     bool start(ast::statement_list const& x) const;
 
-    client::code_gen::program& program;
-    error_handler_type error_handler;
+    fortran::compiler::program& program_;
+    error_handler_type error_handler_;
   };
 }
