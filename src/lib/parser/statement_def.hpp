@@ -35,7 +35,7 @@ namespace fortran::parser {
     ;
 
   auto const variable_declaration_def =
-    lexeme["var" >> !(alnum | '_')] // make sure we have whole words
+    lexeme["integer" >> !(alnum | '_')] // make sure we have whole words
     >   assignment
     ;
 
@@ -50,12 +50,12 @@ namespace fortran::parser {
   auto const statement_def = statement_list;
 
   BOOST_SPIRIT_DEFINE(
-    statement,
-    statement_list,
-    variable_declaration,
-    assignment,
-    variable
-    );
+    statement
+    , statement_list
+    , variable_declaration
+    , assignment
+    , variable
+  );
 
   struct statement_class : error_handler_base, x3::annotate_on_success {};
   struct assignment_class : x3::annotate_on_success {};

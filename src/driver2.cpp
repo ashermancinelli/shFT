@@ -1,5 +1,6 @@
 #include <ast.hpp>
 #include <vm.hpp>
+#include <ux.hpp>
 #include <compiler.hpp>
 #include <statement.hpp>
 #include <error_handler.hpp>
@@ -8,34 +9,23 @@
 #include <functional>
 
 using namespace std;
+using namespace fortran::ux;
 
-auto hr = [] {
-  for(int i=0; i<80; i++)
-    cout << '-';
-  cout << "\n";
-};
+int main(int argc, char** argv) {
 
-auto prompt = []() {
-  cout << "-> ";
-};
-
-int main() {
-
-  hr();
-  cout << "shFT: Parser, Compiler, and Virtual Machine.\n";
-  cout << "Compiled on " << __DATE__ << "\n";
-  hr();
-  cout << "An empty line parses, compiles, and runs the input.\nExample:\n"
-    << "\t-> var a = 123;\n"
-    << "\t-> var b = 456;\n"
-    << "\t-> var c = a + b * 4;\n\n";
-  hr();
+  if (argc == 1)
+    banner();
 
   std::string storage, line;
   prompt();
   while (std::getline(cin, line)) {
     if (line.empty()) {
       break;
+    }
+    else if (line == "help") {
+      help();
+      prompt();
+      continue;
     }
     storage += line + '\n';
     prompt();
@@ -54,8 +44,7 @@ int main() {
   fortran::compiler::compiler compile(prog, error_handler);
 
   auto const parser =
-    with<fortran::parser::error_handler_tag>(std::ref(error_handler))
-    [
+    with<fortran::parser::error_handler_tag>(std::ref(error_handler)) [
       fortran::statement()
     ];
 

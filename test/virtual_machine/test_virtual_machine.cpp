@@ -1,6 +1,8 @@
 #include <vm.hpp>
 #include <iostream>
+#include <sstream>
 #include <util.hpp>
+#include <ux.hpp>
 #include "test_fns.hpp"
 
 using namespace std;
@@ -9,26 +11,23 @@ using namespace fortran::testing::util;
 
 int main() {
 
-  line();
-  cout << "Testing fortran virtual machine.\n";
-  line();
+  ux::banner();
+  ux::hrwrap("Testing fortran virtual machine.");
 
   int fail = 0;
 
-  fail += testing::test_return();
-  fail += testing::test_add();
-  fail += testing::test_sub();
-  fail += testing::test_mul();
-  fail += testing::test_div();
+  fail += testing::virtual_machine::test_return();
+  fail += testing::virtual_machine::test_add();
+  fail += testing::virtual_machine::test_sub();
+  fail += testing::virtual_machine::test_mul();
+  fail += testing::virtual_machine::test_div();
 
-  line();
   if (fail) {
-    cout << "Tests failed!\n";
+    ux::hrwrap("Tests failed!");
   }
   else {
-    cout << "Tests Passed.\n";
+    ux::hrwrap("Tests passed.");
   }
-  line();
 
   return fail;
 }

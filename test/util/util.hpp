@@ -11,10 +11,4 @@ namespace fortran::testing::util {
     cout << "TEST::" << func << "::" << (fail ? "FAIL" : "PASS") << "\n";
     return fail;
   };
-
-  constexpr auto line = [] {
-    for (int i=0; i<80; i++)
-      cout << '-';
-    cout << "\n";
-  };
 }
