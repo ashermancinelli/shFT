@@ -6,9 +6,7 @@ namespace fortran::ux {
   using std::cout;
 
   auto hr = [] {
-    for(int i=0; i<80; i++)
-      cout << '-';
-    cout << "\n";
+    cout << std::string(80, '-') << "\n";
   };
 
   auto hrwrap = [] (std::string msg) {

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <boost/spirit/home/x3.hpp>
+#include "error_handler.hpp"
 #include "ast.hpp"
 
 namespace fortran {

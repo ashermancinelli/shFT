@@ -57,9 +57,9 @@ namespace fortran::parser {
     , variable
   );
 
-  struct statement_class : error_handler_base, x3::annotate_on_success {};
-  struct assignment_class : x3::annotate_on_success {};
-  struct variable_class : x3::annotate_on_success {};
+  struct statement : error_handler_base, x3::annotate_on_success {};
+  struct assignment : x3::annotate_on_success {};
+  struct variable : x3::annotate_on_success {};
 }
 
 namespace fortran {
