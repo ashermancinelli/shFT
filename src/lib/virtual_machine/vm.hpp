@@ -51,6 +51,10 @@ namespace fortran {
       return execute(code, code.begin(), stack_.begin());
     }
 
+    inline std::vector<int> const& get_stack() {
+      return stack_;
+    }
+
   private:
     std::vector<int> stack_;
   };
