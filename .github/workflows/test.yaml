@@ -31,7 +31,7 @@ jobs:
         fi
     - run: |
         sudo apt update
-        sudo apt install llvm-10 clang-10
+        sudo apt install llvm-11 clang-11
       shell: bash
     - uses: ashutoshvarma/action-cmake-build@master
       with:
