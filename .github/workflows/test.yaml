@@ -29,13 +29,16 @@ jobs:
               dpkg -L $dep | while IFS= read -r f; do if test -f $f; then echo $f; fi; done | xargs cp --parents --target-directory ${{ runner.workspace }}/boost/
           done
         fi
+    - run: |
+        sudo apt update
+        sudo apt install gcc-10 g++-10
+      shell: bash
     - uses: ashutoshvarma/action-cmake-build@master
       with:
         source-dir: ${{ runner.workspace }}/shFT
         build-dir: ${{ runner.workspace }}/shFT/build
-        run: ls
-        cc: gcc
-        cxx: g++
+        cc: gcc-10
+        cxx: g++-10
         build-type: Debug
         configure-options: -DBOOSTROOT=${{ runner.workspace }}/boost/ -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=..
         ctest-options: -VV
