@@ -4,11 +4,11 @@ on:
     branches: [ master ]
   pull_request:
     branches: [ master ]
-strategy:
-  matrix:
-    compiler: [gcc, clang]
 jobs:
   build:
+    strategy:
+      matrix:
+        compiler: [gcc, clang]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
