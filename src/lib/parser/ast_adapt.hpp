@@ -6,6 +6,9 @@
 BOOST_FUSION_ADAPT_STRUCT(fortran::ast::unary,
     operator_, operand_);
 
+BOOST_FUSION_ADAPT_STRUCT(fortran::ast::_return,
+    value_);
+
 BOOST_FUSION_ADAPT_STRUCT(fortran::ast::operation,
     operator_, operand_);
 
@@ -18,6 +21,19 @@ BOOST_FUSION_ADAPT_STRUCT(fortran::ast::variable_declaration,
 BOOST_FUSION_ADAPT_STRUCT(fortran::ast::assignment,
     lhs_, rhs_);
 
+/* Condition block version
+BOOST_FUSION_ADAPT_STRUCT(fortran::ast::condition_block,
+    condition_, body_)
+
+BOOST_FUSION_ADAPT_STRUCT(fortran::ast::if_statement,
+    condition_blocks_, else_);
+
+BOOST_FUSION_ADAPT_STRUCT(fortran::ast::while_statement,
+    condition_block_);
+    */
+
+/* No cond-blocks
+ */
 BOOST_FUSION_ADAPT_STRUCT(fortran::ast::if_statement,
     condition_, body_, else_);
 

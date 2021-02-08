@@ -274,6 +274,19 @@ namespace fortran::compiler {
     return boost::apply_visitor(*this, x);
   }
 
+  bool compiler::operator()(ast::_return const& x) const {
+    if (!(*this)(x.value_))
+      return false;
+    program_.op(op_return);
+    return true;
+  }
+
+  bool compiler::operator()(ast::block const& x) const {
+    if (!(*this)(x.statement_))
+      return false;
+    return true;
+  }
+
   bool compiler::operator()(ast::statement_list const& x) const {
     for (auto const& s : x) {
       if (!(*this)(s))

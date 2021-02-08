@@ -3,7 +3,21 @@
 namespace fortran::testing::compiler {
   std::vector<testcase> testcases() {
     static std::vector<testcase> testcases_ = {
-      {"Declaration", "var a = 5;", 5},
+      {"Declaration", "integer a = 5; return a;", 5},
+      {"Add", R"(
+integer a = 5;
+a = a + 3;
+return a;
+)", 8},
+      {"If statement", R"(
+integer a = 5;
+if a > 3 {
+  return true;
+}
+else {
+  return false;
+}
+)", 1},
     };
 
     return testcases_;

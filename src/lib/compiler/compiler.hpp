@@ -58,7 +58,9 @@ namespace fortran::compiler {
     bool operator()(ast::assignment const& x) const;
     bool operator()(ast::variable_declaration const& x) const;
     bool operator()(ast::statement_list const& x) const;
+    bool operator()(ast::block const& x) const;
     bool operator()(ast::statement const& x) const;
+    bool operator()(ast::_return const& x) const;
     bool operator()(ast::if_statement const& x) const;
     bool operator()(ast::while_statement const& x) const;
 

@@ -5,8 +5,6 @@
 #include <boost/spirit/home/x3/support/ast/position_tagged.hpp>
 #include <sstream>
 #include <iostream>
-#include "expression.hpp"
-#include "statement.hpp"
 #include <ux.hpp>
 
 namespace fortran::parser {
@@ -89,7 +87,7 @@ namespace fortran::parser {
       /* Propagate */
       handler(x.where(), ss.str());
 
-      return x3::error_handler_result::accept;
+      return x3::error_handler_result::fail;
     }
   };
 }

@@ -1,8 +1,10 @@
+// #define BOOST_SPIRIT_X3_DEBUG
+
 #include <ast.hpp>
 #include <vm.hpp>
 #include <ux.hpp>
 #include <compiler.hpp>
-#include <statement.hpp>
+#include <parser.hpp>
 #include <error_handler.hpp>
 #include <config.hpp>
 #include <iostream>
@@ -45,7 +47,7 @@ int main(int argc, char** argv) {
 
   auto const parser =
     with<fortran::parser::error_handler_tag>(std::ref(error_handler)) [
-      fortran::statement()
+      fortran::get_parser()
     ];
 
   hr();

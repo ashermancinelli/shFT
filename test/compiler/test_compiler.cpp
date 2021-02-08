@@ -2,7 +2,7 @@
 #include <vm.hpp>
 #include <ux.hpp>
 #include <compiler.hpp>
-#include <statement.hpp>
+#include <parser.hpp>
 #include <error_handler.hpp>
 #include <config.hpp>
 #include <iostream>
@@ -35,7 +35,7 @@ int main() {
     fortran::compiler::compiler compile(prog, error_handler);
     auto const parser =
       with<fortran::parser::error_handler_tag>(std::ref(error_handler)) [
-        fortran::statement()
+        fortran::get_parser()
       ];
 
     bool r = false;
@@ -73,10 +73,14 @@ int main() {
       fail++;
       continue;
     }
+
+    cout << "PASS: " << testcase_ << "\n";
   }
 
   if (fail) {
-    ux::hrwrap("Tests failed!");
+    std::stringstream ss;
+    ss << "Found " << fail << " failure(s).";
+    ux::hrwrap(ss.str());
   }
   else {
     ux::hrwrap("Tests passed.");
