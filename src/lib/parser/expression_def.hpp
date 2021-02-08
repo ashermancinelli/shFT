@@ -1,39 +1,44 @@
 #pragma once
 #include "ast.hpp"
-#include "ast_adapt.hpp"
 #include "expression.hpp"
-#include "common.hpp"
+#include "annotation.hpp"
 #include "error_handler.hpp"
 
-#include <boost/spirit/home/x3.hpp>
-#include <boost/spirit/home/x3/support/utility/annotate_on_success.hpp>
-
 namespace fortran::parser {
-  using x3::uint_;
-  using x3::char_;
-  using x3::bool_;
-  using x3::raw;
-  using x3::lexeme;
-  using namespace x3::ascii;
+  template <typename Iterator>
+  expression<Iterator>::expression(error_handler<Iterator>& error_handler)
+    : expression::base_type(expr) {
+    qi::_1_type _1;
+    qi::_2_type _2;
+    qi::_3_type _3;
+    qi::_4_type _4;
 
-  x3::symbols<ast::optoken> equality_op;
-  x3::symbols<ast::optoken> relational_op;
-  x3::symbols<ast::optoken> logical_op;
-  x3::symbols<ast::optoken> additive_op;
-  x3::symbols<ast::optoken> multiplicative_op;
-  x3::symbols<ast::optoken> unary_op;
-  x3::symbols<> keywords;
+    qi::char_type char_;
+    qi::uint_type uint_;
+    qi::_val_type _val;
+    qi::raw_type raw;
+    qi::lexeme_type lexeme;
+    qi::alpha_type alpha;
+    qi::alnum_type alnum;
+    qi::bool_type bool_;
 
-  /** Statically add keywords to x3 symbol lists */
-  void add_keywords() {
-    static bool hasRun=false;
-    if(hasRun)
-      return;
-    hasRun = true;
+    using qi::on_error;
+    using qi::on_success;
+    using qi::fail;
+    using boost::phoenix::function;
 
-    logical_op.add
-      ("&&", ast::and_)
+    using error_handler_function = function<::fortran::error_handler<Iterator>>;
+    using annotation_function = function<::fortran::annotation<Iterator>>;
+
+    /***************************************************************************
+     * Tokens
+     **************************************************************************/
+    logical_or_op.add
       ("||", ast::or_)
+      ;
+
+    logical_and_op.add
+      ("&&", ast::and_)
       ;
 
     equality_op.add
@@ -65,98 +70,110 @@ namespace fortran::parser {
       ;
 
     keywords.add
-      ("var")
       ("true")
       ("false")
       ("if")
       ("else")
       ("while")
+      ("int")
+      ("void")
+      ("return")
       ;
-  }
 
-  /** Defined in "expression.hpp" */
-  expression_type const expression = "expression";
+    /***************************************************************************
+     * Main expression grammar
+     **************************************************************************/
+    expr =
+      logical_or_expr.alias()
+      ;
 
-  /** Others are defined below */
+    logical_or_expr =
+      logical_and_expr
+      >> *(logical_or_op > logical_and_expr)
+      ;
 
-  x3::rule<struct equality_expression, ast::expression> const
-    equality_expression = "equality_expression";
+    logical_and_expr =
+      equality_expr
+      >> *(logical_and_op > equality_expr)
+      ;
 
-  x3::rule<struct relational_expression, ast::expression> const
-    relational_expression = "relational_expression";
+    equality_expr =
+      relational_expr
+      >> *(equality_op > relational_expr)
+      ;
 
-  x3::rule<struct logical_expression, ast::expression> const logical_expression
-    = "logical_expression";
+    relational_expr =
+      additive_expr
+      >> *(relational_op > additive_expr)
+      ;
 
-  x3::rule<struct additive_expression, ast::expression> const
-    additive_expression = "additive_expression";
+    additive_expr =
+      multiplicative_expr
+      >> *(additive_op > multiplicative_expr)
+      ;
 
-  x3::rule<struct multiplicative_expression, ast::expression> const
-    multiplicative_expression = "multiplicative_expression";
+    multiplicative_expr =
+      unary_expr
+      >> *(multiplicative_op > unary_expr)
+      ;
 
-  x3::rule<struct unary_expression, ast::operand> const unary_expression
-    = "unary_expression";
+    unary_expr =
+      primary_expr
+      |   (unary_op > unary_expr)
+      ;
 
-  x3::rule<struct primary_expression, ast::operand> const primary_expression
-    = "primary_expression";
+    primary_expr =
+      uint_
+      // |   function_call
+      |   identifier
+      |   bool_
+      |   '(' > expr > ')'
+      ;
 
-  auto const logical_expression_def =
-    equality_expression
-    >> *(logical_op > equality_expression)
-    ;
+    /*
+    function_call =
+      (identifier >> '(')
+      >   argument_list
+      >   ')'
+      ;
+      */
 
-  auto const equality_expression_def =
-    relational_expression
-    >> *(equality_op > relational_expression)
-    ;
+    argument_list = -(expr % ',');
 
-  auto const relational_expression_def =
-    additive_expression
-    >> *(relational_op > additive_expression)
-    ;
+    identifier =
+      !lexeme[keywords >> !(alnum | '_')]
+      >>  raw[lexeme[(alpha | '_') >> *(alnum | '_')]]
+      ;
 
-  auto const additive_expression_def =
-    multiplicative_expression
-    >> *(additive_op > multiplicative_expression)
-    ;
+    /***************************************************************************
+     * Debugging and error handling and reporting support.
+     **************************************************************************/
+    BOOST_SPIRIT_DEBUG_NODES(
+        (expr)
+        (logical_or_expr)
+        (logical_and_expr)
+        (equality_expr)
+        (relational_expr)
+        (additive_expr)
+        (multiplicative_expr)
+        (unary_expr)
+        (primary_expr)
+        // (function_call)
+        (argument_list)
+        (identifier)
+        );
 
-  auto const multiplicative_expression_def =
-    unary_expression
-    >> *(multiplicative_op > unary_expression)
-    ;
+    /***************************************************************************
+     * Error handling: on error in expr, call error_handler.
+     **************************************************************************/
+    on_error<fail>(expr,
+        error_handler_function(error_handler)(
+          "Error! Expecting ", _4, _3));
 
-  auto const unary_expression_def =
-    primary_expression
-    |   (unary_op > primary_expression)
-    ;
-
-  auto const primary_expression_def =
-    uint_
-    |   bool_
-    |   (!keywords >> identifier)
-    |   '(' > expression > ')'
-    ;
-
-  auto const expression_def = logical_expression;
-
-  BOOST_SPIRIT_DEFINE(
-    expression,
-    logical_expression,
-    equality_expression,
-    relational_expression,
-    additive_expression,
-    multiplicative_expression,
-    unary_expression,
-    primary_expression
-    );
-
-  struct unary_expression : x3::annotate_on_success {};
-  struct primary_expression : x3::annotate_on_success {};
-}
-
-namespace fortran {
-  parser::expression_type const& expression() {
-    parser::add_keywords();
-    return parser::expression;
+    /***************************************************************************
+     * Annotation: on success in primary_expr, call annotation.
+     **************************************************************************/
+    on_success(primary_expr,
+        annotation_function(error_handler.iters)(_val, _1));
   }
 }

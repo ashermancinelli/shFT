@@ -1,6 +1,7 @@
 #include "statement_def.hpp"
-#include "config.hpp"
 
-namespace fortran::parser {
-  BOOST_SPIRIT_INSTANTIATE(statement_type, iterator_type, context_type);
-}
+/*******************************************************************************
+ * Instantiation of statement type with the predetermined iterator type.
+ ******************************************************************************/
+using iterator_type = std::string::const_iterator;
+template struct fortran::parser::statement<iterator_type>;

@@ -1,95 +1,79 @@
 #pragma once
 
-#include <boost/spirit/home/x3.hpp>
-#include <boost/spirit/home/x3/support/utility/error_reporting.hpp>
-#include <boost/spirit/home/x3/support/ast/position_tagged.hpp>
-#include <sstream>
 #include <iostream>
-#include "expression.hpp"
-#include "statement.hpp"
+#include <string>
+#include <vector>
 #include <ux.hpp>
 
-namespace fortran::parser {
-  namespace x3 = boost::spirit::x3;
+using namespace fortran::ux;
 
-  struct error_counter_tag;
-
-  /* For keeping track of number of error in a given parse step */
+namespace fortran {
+  /*****************************************************************************
+   * Error Handler
+   *
+   * Creates error messages and uses source annotation to determine where the
+   * parse/compilation failed.
+   ****************************************************************************/
   template <typename Iterator>
-  struct error_counter {
-    inline int operator*() {
-      return nerrors_;
-    }
-    inline int operator++() {
-      return nerrors_++;
-    }
-  private:
-    int nerrors_=0;
-  };
+  struct error_handler {
+    template <typename, typename, typename>
+    struct result { using type = void; };
 
-  struct error_formatter {
-    template <typename Iterator, typename Exception, typename Context>
-    x3::error_handler_result operator()(Iterator& first, Iterator const& last,
-        Exception const& x, Context const& context) {
+    error_handler(Iterator first, Iterator last, std::ostream& os)
+      : first(first), last(last), os_{os} {}
 
-      auto& counter = x3::get<error_counter_tag>(context).get();
-      counter++;
-
-      /* Construct error message */
-      std::stringstream ss;
-      ss << std::string(80, '-') << "\n"
-        << "[ERROR " << *counter << "]: \"" << x.what() << "\"\n"
-        << "Expected: " << x.which() << " here:\n";
-
-      int prefix=0, suffix;
-      auto curr = first;
-      auto iter = x.where();
-
-      /* Print up to the character where parsing failed */
-      while (curr != iter) {
-        prefix++;
-        ss << *curr++;
-      }
-      while (suffix < 10 && iter != last) {
-        ss << *iter++;
-        suffix++;
+    template <typename Message, typename What>
+      void operator()(Message const& message, What const& what, 
+          Iterator err_pos) const {
+        int line;
+        Iterator line_start = get_pos(err_pos, line);
+        std::stringstream ss_r, ss_g;
+        if (err_pos != last) {
+          ss_r << message << what << " line " << line << ':' << std::endl
+            << reset(get_line(line_start)) << std::endl;
+          for (; line_start != err_pos; ++line_start)
+            ss_g << green("~");
+          ss_g << green("^") << std::endl;
+        }
+        else {
+          ss_r << "Unexpected end of file. " << message << what
+            << " line " << line << std::endl;
+        }
+        os_ << red(ss_r.str()) << green(ss_g.str());
       }
 
-      /* Print line leading to failed character */
-      ss << "\n";
-      for (int i=0; i<prefix; i++) {
-        ss << "~";
+    Iterator get_pos(Iterator err_pos, int& line) const {
+      line = 1;
+      Iterator i = first;
+      Iterator line_start = first;
+      while (i != err_pos) {
+        bool eol = false;
+        if (i != err_pos && *i == '\r') {
+          eol = true;
+          line_start = ++i;
+        }
+        if (i != err_pos && *i == '\n') {
+          eol = true;
+          line_start = ++i;
+        }
+        if (eol)
+          ++line;
+        else
+          ++i;
       }
-      ss << "^\n";
-      std::cout << ss.str();
-      return x3::error_handler_result::fail;
+      return line_start;
     }
-  };
 
-  template<typename Iterator>
-  using error_handler = x3::error_handler<Iterator>;
-
-  using error_handler_tag = x3::error_handler_tag;
-
-  struct error_handler_base {
-
-    /* error handler grabs instantiated object from context */
-    template <typename Iterator, typename Exception, typename Context>
-    x3::error_handler_result on_error(Iterator& first, Iterator const& last,
-        Exception const& x, Context const& context) {
-
-      std::stringstream ss;
-      ss << std::string(80, '-') << "\n"
-        << "[ERROR]: \"" << x.what() << "\"\n"
-        << "Expected " << x.which() << " here:\n";
-
-      /* Get the handler from the context */
-      auto& handler = x3::get<error_handler_tag>(context).get();
-
-      /* Propagate */
-      handler(x.where(), ss.str());
-
-      return x3::error_handler_result::accept;
+    std::string get_line(Iterator err_pos) const {
+      Iterator i = err_pos;
+      while (i != last && (*i != '\r' && *i != '\n'))
+        ++i;
+      return std::string(err_pos, i);
     }
+
+    Iterator first;
+    Iterator last;
+    std::vector<Iterator> iters;
+    std::ostream& os_;
   };
 }

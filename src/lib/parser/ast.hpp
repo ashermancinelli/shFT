@@ -1,33 +1,37 @@
 #pragma once
 
-#include <boost/spirit/home/x3/support/ast/position_tagged.hpp>
-#include <boost/spirit/home/x3/support/ast/variant.hpp>
+#include <boost/config/warning_disable.hpp>
+#include <boost/variant/recursive_variant.hpp>
+#include <boost/fusion/include/adapt_struct.hpp>
 #include <boost/fusion/include/io.hpp>
-#include <optional>
+#include <boost/optional.hpp>
 #include <list>
 
 namespace fortran::ast {
-  namespace x3 = boost::spirit::x3;
-
   struct null {};
   struct unary;
+  struct function_call;
   struct expression;
 
-  struct variable : x3::position_tagged {
-    variable(std::string const& name = "") : name_(name) {}
+  /* Used to annotate the AST with the iterator position. This id is used as a
+   * key to a map<int, Iterator> (not really part of the AST.) */
+  struct tagged {
+    int id;
+  };
+
+  struct identifier : tagged {
+    identifier(std::string const& name = "") : name_(name) {}
     std::string name_;
   };
 
-  struct operand :
-    x3::variant<
-      null,
-      int,
-      variable,
-      x3::forward_ast<unary>,
-      x3::forward_ast<expression>> {
-    using base_type::base_type;
-    using base_type::operator=;
-  };
+  using operand = boost::variant<
+    null
+    , unsigned int
+    , identifier
+    , boost::recursive_wrapper<unary>
+    , boost::recursive_wrapper<expression>
+    , boost::recursive_wrapper<function_call>
+  >;
 
   enum optoken {
     plus_,
@@ -52,40 +56,44 @@ namespace fortran::ast {
     operand operand_;
   };
 
-  struct operation : x3::position_tagged {
+  struct operation : tagged {
     optoken operator_;
     operand operand_;
   };
 
-  struct expression : x3::position_tagged {
+  struct function_call : tagged {
+    identifier function_name_;
+    std::list<expression> args_;
+  };
+
+  struct expression : tagged {
     operand first_;
     std::list<operation> rest_;
   };
 
-  struct assignment : x3::position_tagged {
-    variable lhs_;
+  struct assignment : tagged {
+    identifier lhs_;
     expression rhs_;
   };
 
   struct variable_declaration {
-    assignment assignment_;
+    identifier lhs_;
+    std::optional<expression> rhs_;
   };
 
   struct if_statement;
   struct while_statement;
   struct statement_list;
+  struct _return;
 
-  struct statement :
-    x3::variant<
-      variable_declaration,
-      assignment,
-      boost::recursive_wrapper<if_statement>,
-      boost::recursive_wrapper<while_statement>,
-      boost::recursive_wrapper<statement_list>
-    > {
-    using base_type::base_type;
-    using base_type::operator=;
-  };
+  using statement = boost::variant<
+    variable_declaration
+    , assignment
+    , boost::recursive_wrapper<if_statement>
+    , boost::recursive_wrapper<while_statement>
+    , boost::recursive_wrapper<statement_list>
+    , boost::recursive_wrapper<_return>
+  >;
 
   struct statement_list : std::list<statement> {};
 
@@ -100,8 +108,51 @@ namespace fortran::ast {
     statement body_;
   };
 
-  inline std::ostream& operator<<(std::ostream& out, variable const& var) {
+  struct _return : tagged {
+    std::optional<expression> expr_;
+  };
+
+  struct function : tagged {
+    std::string return_type_;
+    identifier function_name_;
+    std::list<identifier> args_;
+    statement_list body_;
+  };
+
+  using function_list = std::list<function>;
+
+  inline std::ostream& operator<<(std::ostream& out, identifier const& var) {
     out << var.name_;
     return out;
   }
 }
+
+BOOST_FUSION_ADAPT_STRUCT(fortran::ast::unary,
+    operator_, operand_);
+
+BOOST_FUSION_ADAPT_STRUCT(fortran::ast::operation,
+    operator_, operand_);
+
+BOOST_FUSION_ADAPT_STRUCT(fortran::ast::function_call,
+    function_name_, args_);
+
+BOOST_FUSION_ADAPT_STRUCT(fortran::ast::expression,
+    first_, rest_);
+
+BOOST_FUSION_ADAPT_STRUCT(fortran::ast::variable_declaration,
+    lhs_, rhs_);
+
+BOOST_FUSION_ADAPT_STRUCT(fortran::ast::assignment,
+    lhs_, rhs_);
+
+BOOST_FUSION_ADAPT_STRUCT(fortran::ast::if_statement,
+    condition_, body_, else_);
+
+BOOST_FUSION_ADAPT_STRUCT(fortran::ast::while_statement,
+    condition_, body_);
+
+BOOST_FUSION_ADAPT_STRUCT(fortran::ast::function,
+    return_type_, function_name_, args_, body_);
+
+BOOST_FUSION_ADAPT_STRUCT(fortran::ast::_return,
+    expr_);

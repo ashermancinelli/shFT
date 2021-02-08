@@ -1,69 +1,129 @@
 #pragma once
 
-#include <boost/spirit/home/x3.hpp>
-#include <boost/spirit/home/x3/support/utility/annotate_on_success.hpp>
-#include "ast.hpp"
-#include "ast_adapt.hpp"
 #include "statement.hpp"
-#include "expression.hpp"
-#include "common.hpp"
 #include "error_handler.hpp"
+#include "annotation.hpp"
 
 namespace fortran::parser {
-  using x3::raw;
-  using x3::lexeme;
-  using namespace x3::ascii;
+  /*****************************************************************************
+   * Implementation of Statement Grammar.
+   *
+   * @see "statement.hpp" for declarations.
+   ****************************************************************************/
 
-  x3::rule<struct statement_list, ast::statement_list> const
-    statement_list("statement_list");
+  /* Wrap string in a lexeme and ensure it's not followed by another illegal
+   * char */
+  auto mkkw = [] (std::string const& x) {
+    return lexeme[x >> !(alnum | '_')];
+  };
 
-  x3::rule<struct variable_declaration, ast::variable_declaration> const
-    variable_declaration("variable_declaration");
+  template <typename Iterator>
+  statement<Iterator>::statement(error_handler<Iterator>& error_handler) :
+    statement::base_type(statement_list), expr(error_handler) {
+    qi::_1_type _1;
+    qi::_2_type _2;
+    qi::_3_type _3;
+    qi::_4_type _4;
 
-  x3::rule<struct assignment, ast::assignment> const assignment("assignment");
+    qi::_val_type _val;
+    qi::raw_type raw;
+    qi::lexeme_type lexeme;
+    qi::alpha_type alpha;
+    qi::alnum_type alnum;
+    qi::lit_type lit;
 
-  x3::rule<struct variable, ast::variable> const variable("variable");
+    using qi::on_error;
+    using qi::on_success;
+    using qi::fail;
+    using boost::phoenix::function;
 
-  statement_type const statement("statement");
+    using error_handler_function = function<::fortran::error_handler<Iterator>>;
+    using annotation_function = function<::fortran::annotation<Iterator>>;
 
-  namespace {
-    auto const& expression = fortran::expression();
+    statement_list =
+      +statement_
+      ;
+
+    statement_ =
+      variable_declaration
+      |   assignment
+      |   compound_statement
+      |   if_statement
+      |   while_statement
+      |   _return
+      ;
+
+    identifier =
+      !expr.keywords
+      >>  raw[lexeme[(alpha | '_') >> *(alnum | '_')]]
+      ;
+
+    variable_declaration =
+      lexeme["int" >> !(alnum | '_')] // make sure we have whole words
+      >   identifier
+      >   -('=' > expr)
+      >   ';'
+      ;
+
+    assignment =
+      identifier
+      >   '='
+      >   expr
+      >   ';'
+      ;
+
+    if_statement =
+      lit("if")
+      >   '('
+      >   expr
+      >   ')'
+      >   statement_
+      >
+      -(
+          lexeme["else" >> !(alnum | '_')] // make sure we have whole words
+          >   statement_
+       )
+      ;
+
+    while_statement =
+      lit("while")
+      >   '('
+      >   expr
+      >   ')'
+      >   statement_
+      ;
+
+    compound_statement =
+      '{' >> -statement_list >> '}'
+      ;
+
+    _return =
+      lexeme["return" >> !(alnum | '_')] // make sure we have whole words
+      >  -expr
+      >   ';'
+      ;
+
+    // Debugging and error handling and reporting support.
+    BOOST_SPIRIT_DEBUG_NODES(
+        (statement_list)
+        (identifier)
+        (variable_declaration)
+        (assignment)
+        );
+
+    // Error handling: on error in statement_list, call error_handler.
+    on_error<fail>(statement_list,
+        error_handler_function(error_handler)(
+          "Error! Expecting ", _4, _3));
+
+    // Annotation: on success in variable_declaration,
+    // assignment and return_statement, call annotation.
+    on_success(variable_declaration,
+        annotation_function(error_handler.iters)(_val, _1));
+    on_success(assignment,
+        annotation_function(error_handler.iters)(_val, _1));
+    on_success(_return,
+        annotation_function(error_handler.iters)(_val, _1));
   }
 
-  auto const statement_list_def =
-    +(variable_declaration | assignment)
-    ;
-
-  auto const variable_declaration_def =
-    lexeme["integer" >> !(alnum | '_')] // make sure we have whole words
-    >   assignment
-    ;
-
-  auto const assignment_def =
-    variable
-    >   '='
-    >   expression
-    >   ';'
-    ;
-
-  auto const variable_def = identifier;
-  auto const statement_def = statement_list;
-
-  BOOST_SPIRIT_DEFINE(
-    statement
-    , statement_list
-    , variable_declaration
-    , assignment
-    , variable
-  );
-
-  struct statement : error_handler_base, x3::annotate_on_success {};
-  struct assignment : x3::annotate_on_success {};
-  struct variable : x3::annotate_on_success {};
-}
-
-namespace fortran {
-  parser::statement_type const& statement() {
-    return parser::statement;
-  }
 }

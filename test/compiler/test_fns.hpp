@@ -5,7 +5,6 @@
 #include <compiler.hpp>
 #include <statement.hpp>
 #include <error_handler.hpp>
-#include <config.hpp>
 #include <string>
 #include <tuple>
 #include <array>

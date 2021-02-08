@@ -4,7 +4,6 @@
 #include <compiler.hpp>
 #include <statement.hpp>
 #include <error_handler.hpp>
-#include <config.hpp>
 #include <iostream>
 #include <functional>
 #include "test_fns.hpp"
