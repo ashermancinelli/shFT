@@ -15,7 +15,7 @@ jobs:
       id: cache-boost
       with:
         path: ${{ runner.workspace }}/boost
-        key: libboost1.65-dev
+        key: libboost1.75-dev
     - name: Install boost
       env:
         CACHE_HIT: ${{steps.cache-boost.outputs.cache-hit}}
@@ -23,22 +23,22 @@ jobs:
         if [[ "$CACHE_HIT" == 'true' ]]; then
           sudo cp --force --recursive ~/boost/* /
         else
-          sudo apt-get update && sudo apt-get install -yq libboost1.65-dev
+          sudo apt-get update && sudo apt-get install -yq libboost1.75-dev
           mkdir -p ${{ runner.workspace }}/boost
-          for dep in libboost1.65-dev; do
+          for dep in libboost1.75-dev; do
               dpkg -L $dep | while IFS= read -r f; do if test -f $f; then echo $f; fi; done | xargs cp --parents --target-directory ${{ runner.workspace }}/boost/
           done
         fi
     - run: |
         sudo apt update
-        sudo apt install gcc-10 g++-10
+        sudo apt install llvm-10 clang-10
       shell: bash
     - uses: ashutoshvarma/action-cmake-build@master
       with:
         source-dir: ${{ runner.workspace }}/shFT
         build-dir: ${{ runner.workspace }}/shFT/build
-        cc: gcc-10
-        cxx: g++-10
+        cc: clang
+        cxx: clang++
         build-type: Debug
         configure-options: -DBOOSTROOT=${{ runner.workspace }}/boost/ -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=..
         ctest-options: -VV
