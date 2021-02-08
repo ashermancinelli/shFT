@@ -2,7 +2,7 @@
 
 #include <boost/spirit/include/qi.hpp>
 
-namespace fortran::parser {
+namespace shFT::parser {
   namespace qi = boost::spirit::qi;
   namespace ascii = boost::spirit::ascii;
 

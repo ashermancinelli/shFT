@@ -5,9 +5,9 @@
 #include <vector>
 #include <ux.hpp>
 
-using namespace fortran::ux;
+using namespace shFT::ux;
 
-namespace fortran {
+namespace shFT {
   /*****************************************************************************
    * Error Handler
    *

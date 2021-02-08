@@ -4,7 +4,7 @@
 #include "error_handler.hpp"
 #include "annotation.hpp"
 
-namespace fortran::parser {
+namespace shFT::parser {
   /*****************************************************************************
    * Implementation of Statement Grammar.
    *
@@ -37,8 +37,8 @@ namespace fortran::parser {
     using qi::fail;
     using boost::phoenix::function;
 
-    using error_handler_function = function<::fortran::error_handler<Iterator>>;
-    using annotation_function = function<::fortran::annotation<Iterator>>;
+    using error_handler_function = function<::shFT::error_handler<Iterator>>;
+    using annotation_function = function<::shFT::annotation<Iterator>>;
 
     statement_list =
       +statement_

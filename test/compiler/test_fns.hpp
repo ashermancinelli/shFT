@@ -10,7 +10,7 @@
 #include <array>
 #include <iostream>
 
-namespace fortran::testing::compiler {
+namespace shFT::testing::compiler {
   /* Each test case contains code to compile and run in the virtual machine
    * as well as the expected output on the top of the stack */
   struct testcase {

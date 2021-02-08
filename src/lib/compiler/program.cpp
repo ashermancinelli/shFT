@@ -1,6 +1,6 @@
 #include "program.hpp"
 
-namespace fortran::compiler {
+namespace shFT::compiler {
   void program::op(std::initializer_list<int> l) {
     for (auto const v : l) {
       op(v);

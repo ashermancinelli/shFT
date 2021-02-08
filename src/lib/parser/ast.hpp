@@ -7,7 +7,7 @@
 #include <boost/optional.hpp>
 #include <list>
 
-namespace fortran::ast {
+namespace shFT::ast {
   struct null {};
   struct unary;
   struct function_call;
@@ -127,32 +127,32 @@ namespace fortran::ast {
   }
 }
 
-BOOST_FUSION_ADAPT_STRUCT(fortran::ast::unary,
+BOOST_FUSION_ADAPT_STRUCT(shFT::ast::unary,
     operator_, operand_);
 
-BOOST_FUSION_ADAPT_STRUCT(fortran::ast::operation,
+BOOST_FUSION_ADAPT_STRUCT(shFT::ast::operation,
     operator_, operand_);
 
-BOOST_FUSION_ADAPT_STRUCT(fortran::ast::function_call,
+BOOST_FUSION_ADAPT_STRUCT(shFT::ast::function_call,
     function_name_, args_);
 
-BOOST_FUSION_ADAPT_STRUCT(fortran::ast::expression,
+BOOST_FUSION_ADAPT_STRUCT(shFT::ast::expression,
     first_, rest_);
 
-BOOST_FUSION_ADAPT_STRUCT(fortran::ast::variable_declaration,
+BOOST_FUSION_ADAPT_STRUCT(shFT::ast::variable_declaration,
     lhs_, rhs_);
 
-BOOST_FUSION_ADAPT_STRUCT(fortran::ast::assignment,
+BOOST_FUSION_ADAPT_STRUCT(shFT::ast::assignment,
     lhs_, rhs_);
 
-BOOST_FUSION_ADAPT_STRUCT(fortran::ast::if_statement,
+BOOST_FUSION_ADAPT_STRUCT(shFT::ast::if_statement,
     condition_, body_, else_);
 
-BOOST_FUSION_ADAPT_STRUCT(fortran::ast::while_statement,
+BOOST_FUSION_ADAPT_STRUCT(shFT::ast::while_statement,
     condition_, body_);
 
-BOOST_FUSION_ADAPT_STRUCT(fortran::ast::function,
+BOOST_FUSION_ADAPT_STRUCT(shFT::ast::function,
     return_type_, function_name_, args_, body_);
 
-BOOST_FUSION_ADAPT_STRUCT(fortran::ast::_return,
+BOOST_FUSION_ADAPT_STRUCT(shFT::ast::_return,
     expr_);

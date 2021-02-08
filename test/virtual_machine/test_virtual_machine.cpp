@@ -6,13 +6,13 @@
 #include "test_fns.hpp"
 
 using namespace std;
-using namespace fortran;
-using namespace fortran::testing::util;
+using namespace shFT;
+using namespace shFT::testing::util;
 
 int main() {
 
   ux::banner();
-  ux::hrwrap("Testing fortran virtual machine.");
+  ux::hrwrap("Testing shFT virtual machine.");
 
   int fail = 0;
 

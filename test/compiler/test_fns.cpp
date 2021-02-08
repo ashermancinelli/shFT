@@ -1,6 +1,6 @@
 #include "test_fns.hpp"
 
-namespace fortran::testing::compiler {
+namespace shFT::testing::compiler {
   std::vector<testcase> testcases() {
     static std::vector<testcase> testcases_ = {
       {"Default Main Function", "int main() { return 0; }", 0},

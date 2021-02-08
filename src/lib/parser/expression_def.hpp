@@ -4,7 +4,7 @@
 #include "annotation.hpp"
 #include "error_handler.hpp"
 
-namespace fortran::parser {
+namespace shFT::parser {
   template <typename Iterator>
   expression<Iterator>::expression(error_handler<Iterator>& error_handler)
     : expression::base_type(expr) {
@@ -27,8 +27,8 @@ namespace fortran::parser {
     using qi::fail;
     using boost::phoenix::function;
 
-    using error_handler_function = function<::fortran::error_handler<Iterator>>;
-    using annotation_function = function<::fortran::annotation<Iterator>>;
+    using error_handler_function = function<::shFT::error_handler<Iterator>>;
+    using annotation_function = function<::shFT::annotation<Iterator>>;
 
     /***************************************************************************
      * Tokens

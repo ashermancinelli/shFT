@@ -6,7 +6,7 @@
 
 #include "source_function.hpp"
 
-namespace fortran::compiler {
+namespace shFT::compiler {
   void function::op(int a) {
     code_.push_back(a);
     size_ += 1;

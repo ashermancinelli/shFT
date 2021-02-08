@@ -3,12 +3,12 @@ add_subdirectory(virtual_machine)
 add_subdirectory(parser)
 add_subdirectory(compiler)
 
-add_library(fortran_fortran INTERFACE)
-target_link_libraries(fortran_fortran
+add_library(shFT_shFT INTERFACE)
+target_link_libraries(shFT_shFT
   INTERFACE
-  fortran::parser
-  fortran::virtual_machine
-  fortran::compiler
-  fortran::ux
+  shFT::parser
+  shFT::virtual_machine
+  shFT::compiler
+  shFT::ux
   )
-add_library(fortran::fortran ALIAS fortran_fortran)
+add_library(shFT::shFT ALIAS shFT_shFT)

@@ -1,7 +1,7 @@
 add_subdirectory(util)
 
 add_executable(test_parser parser/test_parser.cpp)
-target_link_libraries(test_parser PRIVATE fortran::parser fortran::testing::util)
+target_link_libraries(test_parser PRIVATE shFT::parser shFT::testing::util)
 
 add_executable(test_compiler
   compiler/test_compiler.cpp
@@ -9,8 +9,8 @@ add_executable(test_compiler
   )
 target_link_libraries(test_compiler 
   PRIVATE 
-  fortran::compiler
-  fortran::testing::util
+  shFT::compiler
+  shFT::testing::util
   )
 
 add_executable(test_virtual_machine
@@ -19,6 +19,6 @@ add_executable(test_virtual_machine
   )
 target_link_libraries(test_virtual_machine
   PRIVATE
-  fortran::virtual_machine
-  fortran::testing::util
+  shFT::virtual_machine
+  shFT::testing::util
   )

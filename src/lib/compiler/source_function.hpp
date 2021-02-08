@@ -11,7 +11,7 @@
 #include "error_handler.hpp"
 #include <vm.hpp>
 
-namespace fortran::compiler {
+namespace shFT::compiler {
   struct function {
     function(std::vector<int>& code, int nargs)
       : code_(code), address_(code.size()), size_(0), nargs_(nargs) {}

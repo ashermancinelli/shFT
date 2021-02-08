@@ -4,7 +4,7 @@
 #include "error_handler.hpp"
 #include "annotation.hpp"
 
-namespace fortran::parser {
+namespace shFT::parser {
   /*****************************************************************************
    * Function Rule Definitions
    ****************************************************************************/
@@ -29,8 +29,8 @@ namespace fortran::parser {
     using qi::fail;
     using boost::phoenix::function;
 
-    typedef function<fortran::error_handler<Iterator> > error_handler_function;
-    typedef function<fortran::annotation<Iterator> > annotation_function;
+    typedef function<shFT::error_handler<Iterator> > error_handler_function;
+    typedef function<shFT::annotation<Iterator> > annotation_function;
 
     name =
       !body.expr.keywords

@@ -6,7 +6,7 @@
 #include "skipper.hpp"
 #include <vector>
 
-namespace fortran::parser {
+namespace shFT::parser {
   namespace qi = boost::spirit::qi;
   namespace ascii = boost::spirit::ascii;
 

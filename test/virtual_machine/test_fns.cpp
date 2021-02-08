@@ -4,9 +4,9 @@
 
 using namespace std;
 
-namespace fortran::testing::virtual_machine {
+namespace shFT::testing::virtual_machine {
 
-  using namespace ::fortran::testing::util;
+  using namespace ::shFT::testing::util;
 
   int test_return() {
     int fail=0;
@@ -19,7 +19,7 @@ namespace fortran::testing::virtual_machine {
       op_return,
     };
 
-    fortran::virtual_machine vm;
+    shFT::virtual_machine vm;
     int ret = vm.execute(code);
     if (ret != expect)
       fail++;
@@ -38,7 +38,7 @@ namespace fortran::testing::virtual_machine {
       op_return,
     };
 
-    fortran::virtual_machine vm;
+    shFT::virtual_machine vm;
     int ret = vm.execute(code);
     if (ret != expect)
       fail++;
@@ -57,7 +57,7 @@ namespace fortran::testing::virtual_machine {
       op_return,
     };
 
-    fortran::virtual_machine vm;
+    shFT::virtual_machine vm;
     int ret = vm.execute(code);
 
     if (ret != expect)
@@ -77,7 +77,7 @@ namespace fortran::testing::virtual_machine {
       op_return,
     };
 
-    fortran::virtual_machine vm;
+    shFT::virtual_machine vm;
     int ret = vm.execute(code);
 
     if (ret != expect)
@@ -97,7 +97,7 @@ namespace fortran::testing::virtual_machine {
       op_return,
     };
 
-    fortran::virtual_machine vm;
+    shFT::virtual_machine vm;
     int ret = vm.execute(code);
 
     if (ret != expect)

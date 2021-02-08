@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 
-namespace fortran {
+namespace shFT {
   enum byte_code
   {
     op_neg,         //  negate the top stack entry

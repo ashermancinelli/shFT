@@ -13,7 +13,7 @@
  * purpose of subsequent semantic error handling when the program is being
  * compiled.
  ******************************************************************************/
-namespace fortran {
+namespace shFT {
   template <typename Iterator>
   struct annotation {
     template <typename, typename>

@@ -5,7 +5,7 @@
 #include "statement.hpp"
 #include "skipper.hpp"
 
-namespace fortran::parser {
+namespace shFT::parser {
   /*****************************************************************************
    * Function Grammar
    *

@@ -9,7 +9,7 @@
 #include <vm.hpp>
 #include <ux.hpp>
 
-namespace fortran::compiler {
+namespace shFT::compiler {
   bool compiler::operator()(unsigned int x)
   {
     BOOST_ASSERT(current != 0);
@@ -88,7 +88,7 @@ namespace fortran::compiler {
       return false;
     }
 
-    boost::shared_ptr<fortran::compiler::function> p = functions[x.function_name_.name_];
+    boost::shared_ptr<shFT::compiler::function> p = functions[x.function_name_.name_];
 
     if (p->nargs() != x.args_.size())
     {
@@ -258,8 +258,8 @@ namespace fortran::compiler {
       error_handler(x.function_name_.id, "Duplicate function: " + x.function_name_.name_);
       return false;
     }
-    boost::shared_ptr<fortran::compiler::function>& p = functions[x.function_name_.name_];
-    p.reset(new fortran::compiler::function(code, x.args_.size()));
+    boost::shared_ptr<shFT::compiler::function>& p = functions[x.function_name_.name_];
+    p.reset(new shFT::compiler::function(code, x.args_.size()));
     current = p.get();
     current_function_name = x.function_name_.name_;
 
@@ -294,7 +294,7 @@ namespace fortran::compiler {
       }
     }
     // find the main function
-    boost::shared_ptr<fortran::compiler::function> p =
+    boost::shared_ptr<shFT::compiler::function> p =
       find_function("main");
 
     if (!p) // main function not found
@@ -309,7 +309,7 @@ namespace fortran::compiler {
 
   void compiler::print_assembler() const
   {
-    typedef std::pair<std::string, boost::shared_ptr<fortran::compiler::function> > pair;
+    typedef std::pair<std::string, boost::shared_ptr<shFT::compiler::function> > pair;
     BOOST_FOREACH(pair const& p, functions)
     {
       std::cout << hr() << p.second->get_address() << ": function " << p.first
@@ -318,12 +318,12 @@ namespace fortran::compiler {
     }
   }
 
-  boost::shared_ptr<fortran::compiler::function>
+  boost::shared_ptr<shFT::compiler::function>
     compiler::find_function(std::string const& name) const
     {
       function_table::const_iterator i = functions.find(name);
       if (i == functions.end())
-        return boost::shared_ptr<fortran::compiler::function>();
+        return boost::shared_ptr<shFT::compiler::function>();
       else
         return i->second;
     }

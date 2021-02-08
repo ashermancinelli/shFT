@@ -1,6 +1,6 @@
 #pragma once
 
-namespace fortran::compiler {
+namespace shFT::compiler {
   struct program {
     void op(std::initializer_list<int>);
     void op(int);

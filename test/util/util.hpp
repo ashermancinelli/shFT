@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 
-namespace fortran::testing::util {
+namespace shFT::testing::util {
 
   using namespace std;
 

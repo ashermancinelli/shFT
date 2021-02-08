@@ -1,6 +1,6 @@
 #include "vm.hpp"
 
-int fortran::virtual_machine::execute(std::vector<int> const& code,
+int shFT::virtual_machine::execute(std::vector<int> const& code,
     std::vector<int>::const_iterator pc, std::vector<int>::iterator frame_ptr) {
   std::vector<int>::iterator stack_ptr = frame_ptr;
   while (pc != code.end()) {

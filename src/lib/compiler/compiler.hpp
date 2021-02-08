@@ -11,7 +11,7 @@
 #include <vm.hpp>
 #include "source_function.hpp"
 
-namespace fortran::compiler {
+namespace shFT::compiler {
   struct compiler {
     using result_type = bool;
 
@@ -45,7 +45,7 @@ namespace fortran::compiler {
 
     void print_assembler() const;
 
-    boost::shared_ptr<fortran::compiler::function>
+    boost::shared_ptr<shFT::compiler::function>
       find_function(std::string const& name) const;
 
     std::vector<int>& get_code() { return code; }
@@ -53,10 +53,10 @@ namespace fortran::compiler {
 
   private:
 
-    typedef std::map<std::string, boost::shared_ptr<fortran::compiler::function> > function_table;
+    typedef std::map<std::string, boost::shared_ptr<shFT::compiler::function> > function_table;
 
     std::vector<int> code;
-    fortran::compiler::function* current;
+    shFT::compiler::function* current;
     std::string current_function_name;
     function_table functions;
     bool void_return;

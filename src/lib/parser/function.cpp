@@ -7,4 +7,4 @@
  * and `function_def.hpp`.
  ******************************************************************************/
 typedef std::string::const_iterator iterator_type;
-template struct fortran::parser::function<iterator_type>;
+template struct shFT::parser::function<iterator_type>;

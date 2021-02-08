@@ -9,7 +9,7 @@
 #include <error_handler.hpp>
 
 using namespace std;
-using namespace fortran::ux;
+using namespace shFT::ux;
 
 /*******************************************************************************
  * Driver for main program.
@@ -64,14 +64,14 @@ int main(int argc, char** argv) {
   using iterator_type = std::string::const_iterator;
   iterator_type it = storage.begin(), end = storage.end();
 
-  fortran::virtual_machine vm;
-  fortran::ast::function_list ast;
+  shFT::virtual_machine vm;
+  shFT::ast::function_list ast;
 
-  using error_handler_type = fortran::error_handler<iterator_type>;
+  using error_handler_type = shFT::error_handler<iterator_type>;
   error_handler_type error_handler(it, end, std::cout);
-  fortran::parser::skipper<iterator_type> skipper;
-  fortran::parser::function<iterator_type> function(error_handler);
-  fortran::compiler::compiler compiler(error_handler);
+  shFT::parser::skipper<iterator_type> skipper;
+  shFT::parser::function<iterator_type> function(error_handler);
+  shFT::compiler::compiler compiler(error_handler);
 
   cout << hr();
   cout << "Parsing...\n";
