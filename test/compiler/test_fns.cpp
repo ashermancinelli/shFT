@@ -9,6 +9,40 @@ namespace fortran::testing::compiler {
 int a() { return 1; }
 int main() { return a(); }
 )", 1},
+      {"Decrement Value", "int main() { int a=5; return a-1; }", 4},
+      {"Increment Value", "int main() { int a=5; return a+1; }", 6},
+      {"Assignment", "int main() { int a=5; a=3; return a; }", 3},
+      {"Boolean True", R"(
+int main() {
+  if (true) {
+    return 0;
+  }
+  else {
+    return 1;
+  }
+}
+)", 0},
+      {"Boolean False", R"(
+int main() {
+  if (false) {
+    return 0;
+  }
+  else {
+    return 1;
+  }
+}
+)", 1},
+      {"If statement", "int main() { int a=5; if(a>0) { return a; } return 1; }", 5},
+      {"If-else statement", R"(
+int main() {
+  if (false) {
+    return 0;
+  }
+  else {
+    return 1;
+  }
+}
+)", 1},
     };
 
     return testcases_;
