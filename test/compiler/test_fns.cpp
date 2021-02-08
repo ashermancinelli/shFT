@@ -9,10 +9,6 @@ namespace shFT::testing::compiler {
 int a() { return 1; }
 int main() { return a(); }
 )", 1},
-      {"Global Variable", R"(
-int a = 5;
-int main() { return a; }
-)", 5},
       {"Recursion", R"(
 int callme(a) {
   if (a > 0) {
@@ -58,6 +54,15 @@ int main() {
   }
 }
 )", 1},
+      {"While statement", R"(
+int main() {
+  int a = 0;
+  while (a < 10) {
+    a = a + 1;
+  }
+  return a;
+}
+)", 10},
     };
 
     return testcases_;
