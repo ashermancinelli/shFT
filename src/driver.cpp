@@ -2,11 +2,11 @@
 #include <functional>
 #include <vm.hpp>
 #include <ux.hpp>
-#include "./lib/compiler/compiler.hpp"
-#include "./lib/parser/ast.hpp"
-#include "./lib/parser/statement.hpp"
-#include "./lib/parser/function.hpp"
-#include "./lib/parser/error_handler.hpp"
+#include <compiler.hpp>
+#include <ast.hpp>
+#include <statement.hpp>
+#include <function.hpp>
+#include <error_handler.hpp>
 
 using namespace std;
 using namespace fortran::ux;
@@ -103,7 +103,7 @@ int main(int argc, char** argv) {
 
   auto p = compiler.find_function("main");
   if (!p) {
-    hrwrap("Failed to find entrypoint function `main`.");
+    cout << hrwrap("Failed to find entrypoint function `main`.");
     return 1;
   }
 

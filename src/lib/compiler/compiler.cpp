@@ -7,6 +7,7 @@
 #include <boost/foreach.hpp>
 #include "compiler.hpp"
 #include <vm.hpp>
+#include <ux.hpp>
 
 namespace fortran::compiler {
   bool compiler::operator()(unsigned int x)
@@ -311,8 +312,8 @@ namespace fortran::compiler {
     typedef std::pair<std::string, boost::shared_ptr<fortran::compiler::function> > pair;
     BOOST_FOREACH(pair const& p, functions)
     {
-      std::cout << ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;" << std::endl;
-      std::cout << p.second->get_address() << ": function " << p.first << std::endl;
+      std::cout << hr() << p.second->get_address() << ": function " << p.first
+        << std::endl << hr();
       p.second->print_assembler();
     }
   }

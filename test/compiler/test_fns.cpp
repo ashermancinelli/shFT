@@ -3,7 +3,12 @@
 namespace fortran::testing::compiler {
   std::vector<testcase> testcases() {
     static std::vector<testcase> testcases_ = {
-      {"Declaration", "var a = 5;", 5},
+      {"Default Main Function", "int main() { return 0; }", 0},
+      {"Main Return Value", "int main() { return 1; }", 1},
+      {"Chained Function Call", R"(
+int a() { return 1; }
+int main() { return a(); }
+)", 1},
     };
 
     return testcases_;

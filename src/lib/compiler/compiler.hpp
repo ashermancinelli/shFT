@@ -9,7 +9,7 @@
 #include <ast.hpp>
 #include <error_handler.hpp>
 #include <vm.hpp>
-#include "function.hpp"
+#include "source_function.hpp"
 
 namespace fortran::compiler {
   struct compiler {

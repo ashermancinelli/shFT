@@ -36,11 +36,9 @@ namespace fortran::parser {
       , primary_expr
       ;
 
-    /*
     qi::rule<Iterator, ast::function_call(), skipper<Iterator>>
       function_call
       ;
-      */
 
     qi::rule<Iterator, std::list<ast::expression>(), skipper<Iterator>>
       argument_list

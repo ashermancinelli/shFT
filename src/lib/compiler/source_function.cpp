@@ -4,7 +4,7 @@
 #include <boost/lexical_cast.hpp>
 #include <set>
 
-#include "function.hpp"
+#include "source_function.hpp"
 
 namespace fortran::compiler {
   void function::op(int a) {

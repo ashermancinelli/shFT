@@ -124,19 +124,17 @@ namespace fortran::parser {
 
     primary_expr =
       uint_
-      // |   function_call
+      |   function_call
       |   identifier
       |   bool_
       |   '(' > expr > ')'
       ;
 
-    /*
     function_call =
       (identifier >> '(')
       >   argument_list
       >   ')'
       ;
-      */
 
     argument_list = -(expr % ',');
 
