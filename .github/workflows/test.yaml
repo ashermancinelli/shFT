@@ -30,6 +30,8 @@ jobs:
           done
         fi
     - run: |
+        sudo deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-11 main
+        sudo deb-src http://apt.llvm.org/bionic/ llvm-toolchain-bionic-11 main
         sudo apt update
         sudo apt install llvm-11 clang-11
       shell: bash
