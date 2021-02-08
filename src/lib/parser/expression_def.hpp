@@ -144,7 +144,7 @@ namespace fortran::parser {
       ;
 
     /***************************************************************************
-     * Debugging and error handling and reporting support.
+     * Debugging, error handling, and reporting support.
      **************************************************************************/
     BOOST_SPIRIT_DEBUG_NODES(
         (expr)
@@ -156,7 +156,7 @@ namespace fortran::parser {
         (multiplicative_expr)
         (unary_expr)
         (primary_expr)
-        // (function_call)
+        (function_call)
         (argument_list)
         (identifier)
         );

@@ -9,6 +9,21 @@ namespace fortran::testing::compiler {
 int a() { return 1; }
 int main() { return a(); }
 )", 1},
+      {"Global Variable", R"(
+int a = 5;
+int main() { return a; }
+)", 5},
+      {"Recursion", R"(
+int callme(a) {
+  if (a > 0) {
+    return callme(a - 1);
+  }
+  return 0;
+}
+int main() {
+  return callme(5);
+}
+)", 0},
       {"Decrement Value", "int main() { int a=5; return a-1; }", 4},
       {"Increment Value", "int main() { int a=5; return a+1; }", 6},
       {"Assignment", "int main() { int a=5; a=3; return a; }", 3},
