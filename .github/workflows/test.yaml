@@ -6,9 +6,6 @@ on:
     branches: [ master ]
 jobs:
   build:
-    strategy:
-      matrix:
-        compiler: [gcc, clang]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -17,7 +14,7 @@ jobs:
       uses: actions/cache@v1.0.3
       id: cache-boost
       with:
-        path: "~/boost"
+        path: ${{ runner.workspace }}/boost
         key: libboost1.65-dev
     - name: Install boost
       env:
@@ -27,20 +24,21 @@ jobs:
           sudo cp --force --recursive ~/boost/* /
         else
           sudo apt-get update && sudo apt-get install -yq libboost1.65-dev
-          mkdir -p ~/boost
+          mkdir -p ${{ runner.workspace }}/boost
           for dep in libboost1.65-dev; do
-              dpkg -L $dep | while IFS= read -r f; do if test -f $f; then echo $f; fi; done | xargs cp --parents --target-directory ~/boost/
+              dpkg -L $dep | while IFS= read -r f; do if test -f $f; then echo $f; fi; done | xargs cp --parents --target-directory {{ runner.workspace }}/boost/
           done
         fi
-    # build project
-    - name: mkdir
-      run: mkdir build
-    - name: cmake build
-      run: cmake -Bbuild -H.
-    - name: cmake make
-      run: cmake --build build/ --target all
-      env:
-        MAKEFLAGS: "-j2"
-    # run tests
-    - name: Run Tests
-      run: cmake --build build/ --target test -- ARGS="-VV"
+    - uses: ashutoshvarma/action-cmake-build@master
+      with:
+        source-dir: ${{ runner.workspace }}/shFT
+        build-dir: ${{ runner.workspace }}/shFT/build
+        run: ls
+        cc: gcc
+        cxx: g++
+        build-type: Debug
+        configure-options: -DBOOSTROOT={{ runner.workspace }}/boost/ -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=..
+        ctest-options: -VV
+        run-test: true
+        install-build: true
+        parallel: 4
